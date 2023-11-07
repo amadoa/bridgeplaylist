@@ -47,6 +47,7 @@ def handler(event, context):
 
     # Search for tracks based on the artist and song title
     query = f"artist:{artist} track:{title}"
+    query = query.replace("'", "")
     results = sp.search(q=query, type="track")
 
     # Check if the "tracks" array is not empty
