@@ -16,9 +16,8 @@ jobs:
           fetch-depth: 0 # fetch the whole repo history
 
       - name: Build binary
-        run: |
-          cd main
-          zip -r deployment.zip .
+        run: zip -r deployment.zip .
+          
       
       - name: default deploy
         uses: appleboy/lambda-action@master
