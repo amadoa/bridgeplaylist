@@ -63,10 +63,31 @@ def handler(event, context):
 
 
         # Check if the track is already in the playlist
-        playlist = sp.playlist_tracks(playlist_uri)
-        track_uris_in_playlist = [track["track"]["uri"] for track in playlist["items"]]
+        # Initialize variables for pagination
+        offset = 0
+        total_tracks = 0
+        match = False
 
-        if track_uri not in track_uris_in_playlist:
+        # Get all tracks in the playlist by paginating through the results
+        playlist_tracks = sp.playlist_tracks(playlist_uri, fields="items(track(uri))", offset=offset)
+        items = playlist_tracks['items']
+        while (items and not match):
+
+            # Extract the track URIs already in the playlist
+            existing_track_uris = [track['track']['uri'] for track in items]
+
+            if track_uri in existing_track_uris:
+                match = True
+                break
+
+            total_tracks += len(existing_track_uris)
+            offset += len(items)
+
+            playlist_tracks = sp.playlist_tracks(playlist_uri, fields="items(track(uri))", offset=offset)
+            items = playlist_tracks['items']
+
+        # Add non-duplicate tracks to the playlist
+        if not match:
             # Add the track to the playlist
             sp.playlist_add_items(playlist_uri, [track_uri])
             print(f"Added track {track_uri} to playlist {playlist_uri}")
