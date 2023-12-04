@@ -9,8 +9,10 @@ load_dotenv()
 import os
 
 
+# The Bridge playlist
+channel = os.getenv("CHANNEL")
 # Define the URL
-url = "https://www.siriusxm.com/api/mountain/thebridge"
+url = "https://www.siriusxm.com/api/mountain/" + channel
 
 def handler(event, context):
     try:
@@ -23,7 +25,7 @@ def handler(event, context):
             data = response.json()
 
             # Access the 'channels.thebridge.content' object
-            content = data.get("channels", {}).get("thebridge", {}).get("content")
+            content = data.get("channels", {}).get(channel, {}).get("content")
             artist = content.get("artists", [""])[0].get("name")
             title = content.get("title")
 
